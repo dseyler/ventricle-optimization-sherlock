@@ -1,0 +1,37 @@
+# SLURM job files
+job.o*
+job.e*
+*.log
+
+# Temporary files
+.nan_detected
+.volume_exceeded
+
+# Results directories
+results_*
+
+# VTU files (can be large)
+*.vtu
+*.vtp
+
+# Binary files
+*.bin
+*.dat
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Singularity cache
+.singularity/
