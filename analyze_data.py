@@ -221,23 +221,41 @@ def analyze_single_case(case_info):
     
     # Save principal strain meshes for every 10th timestep
     print(f"  Saving principal strain meshes...")
+    if ref_lumen is None:
+        print(f"  Warning: ref_lumen is None, skipping principal strain mesh creation")
+    else:
+        print(f"  ref_lumen created successfully, processing {len(time_steps)} timesteps")
+        
+    files_saved = 0
     for t_idx, time_step in enumerate(time_steps):
         if time_step % 1 == 0:  # Save every timestep
             try:
                 # Load the VTU file for this timestep
                 vtu_file = os.path.join(results_dir, f"result_{time_step:06d}.vtu")
-                if os.path.exists(vtu_file) and ref_lumen is not None:
-                    mesh = pv.read(vtu_file)
-                    strain_info = calculate_principal_strains(mesh, ref_lumen, time_step)
-                    
-                    # Save principal strain mesh if calculation was successful
-                    if strain_info.get('mesh_with_strains') is not None:
-                        strain_mesh = strain_info['mesh_with_strains']
-                        strain_output_file = os.path.join(case_dir, f"principal_strain_{time_step:06d}.vtp")
-                        strain_mesh.save(strain_output_file)
+                if os.path.exists(vtu_file):
+                    if ref_lumen is not None:
+                        mesh = pv.read(vtu_file)
+                        strain_info = calculate_principal_strains(mesh, ref_lumen, time_step)
+                        
+                        # Save principal strain mesh if calculation was successful
+                        if strain_info.get('mesh_with_strains') is not None:
+                            strain_mesh = strain_info['mesh_with_strains']
+                            strain_output_file = os.path.join(case_dir, f"principal_strain_{time_step:06d}.vtp")
+                            strain_mesh.save(strain_output_file)
+                            files_saved += 1
+                            if files_saved <= 3:  # Only print first few for debugging
+                                print(f"    Saved: {strain_output_file}")
+                        else:
+                            print(f"    Warning: No strain mesh created for timestep {time_step}")
+                    else:
+                        print(f"    Skipping timestep {time_step}: ref_lumen is None")
+                else:
+                    print(f"    Warning: VTU file not found: {vtu_file}")
                         
             except Exception as e:
-                print(f"Error saving principal strain mesh for timestep {time_step}: {e}")
+                print(f"    Error saving principal strain mesh for timestep {time_step}: {e}")
+    
+    print(f"  Total principal strain files saved: {files_saved}")
     
     # Create DataFrame for this case
     case_data = pd.DataFrame({
