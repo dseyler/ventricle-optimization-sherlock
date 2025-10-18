@@ -44,7 +44,7 @@ module load viz
 module load py-matplotlib/3.8.3_py312
 module load py-scipy/1.12.0_py312
 module load py-seaborn/0.13.2_py312
-module load py-pandas/2.2.0_py312
+module load py-pandas/2.2.1_py312
 
 echo "Modules loaded successfully"
 
