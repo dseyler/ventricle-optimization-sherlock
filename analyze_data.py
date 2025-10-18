@@ -165,8 +165,8 @@ def analyze_single_case(case_info):
     # Calculate twist angles
     print(f"  Calculating twist angles...")
     try:
-        # calc_twist_angle returns (time_array, twist_angles_dict, z_levels)
-        time_array, twist_angles_by_z, z_levels_used = calc_twist_angle(
+        # calc_twist_angle returns (time_array, twist_angles_list, z_levels)
+        time_array, twist_angles_list, z_levels_used = calc_twist_angle(
             start_step, end_step, step, timestep_size, 
             results_dir, ref_surface, 
             save_intermediate_data=False
@@ -178,7 +178,8 @@ def analyze_single_case(case_info):
         # Calculate twist angle as difference between max and min z-level twist angles
         twist_angle_differences = []
         for t_idx in range(len(time_array)):
-            z_twist_angles = [twist_angles_by_z[z_level][t_idx] for z_level in z_levels_used]
+            # Get twist angles at all z-levels for this time step
+            z_twist_angles = [twist_angles_list[z_idx][t_idx] for z_idx in range(len(z_levels_used))]
             twist_diff = max(z_twist_angles) - min(z_twist_angles)
             twist_angle_differences.append(twist_diff)
             
@@ -238,7 +239,7 @@ def analyze_single_case(case_info):
                         # Save principal strain mesh if calculation was successful
                         if strain_info.get('mesh_with_strains') is not None:
                             strain_mesh = strain_info['mesh_with_strains']
-                            strain_output_file = os.path.join(case_dir, f"principal_strain_{time_step:06d}.vtp")
+                            strain_output_file = os.path.join(case_dir, f"principal_strain_{time_step:03d}.vtp")
                             strain_mesh.save(strain_output_file)
                             files_saved += 1
                             if files_saved <= 3:  # Only print first few for debugging
