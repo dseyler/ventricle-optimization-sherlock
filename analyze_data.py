@@ -22,8 +22,7 @@ import argparse
 from process_results_functions import (
     calc_twist_angle, 
     calc_volume_3D,
-    get_start_end_step,
-    get_timestep_size
+    get_start_end_step
 )
 
 def find_results_directories(base_dir):
@@ -158,7 +157,7 @@ def analyze_single_case(case_info):
     # Get simulation parameters
     try:
         start_step, end_step, step = get_start_end_step(results_dir)
-        timestep_size = get_timestep_size(results_dir)
+        timestep_size = 0.001
     except Exception as e:
         print(f"Error getting simulation parameters for {case_name}: {e}")
         return pd.DataFrame()
