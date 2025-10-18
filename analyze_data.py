@@ -165,23 +165,27 @@ def analyze_single_case(case_info):
     # Calculate twist angles
     print(f"  Calculating twist angles...")
     try:
-        twist_results = calc_twist_angle(
+        # calc_twist_angle returns (time_array, twist_angles_dict, z_levels)
+        time_array, twist_angles_by_z, z_levels_used = calc_twist_angle(
             start_step, end_step, step, timestep_size, 
             results_dir, ref_surface, 
             save_intermediate_data=False
         )
-        twist_angles_by_z = twist_results['twist_angles_by_z']
-        time_steps = twist_results['time_steps']
+        
+        # Generate time steps from the time array
+        time_steps = [int(t / timestep_size) for t in time_array]
         
         # Calculate twist angle as difference between max and min z-level twist angles
         twist_angle_differences = []
-        for t_idx, time_step in enumerate(time_steps):
-            z_twist_angles = [twist_angles_by_z[z_level][t_idx] for z_level in twist_angles_by_z.keys()]
+        for t_idx in range(len(time_array)):
+            z_twist_angles = [twist_angles_by_z[z_level][t_idx] for z_level in z_levels_used]
             twist_diff = max(z_twist_angles) - min(z_twist_angles)
             twist_angle_differences.append(twist_diff)
             
     except Exception as e:
         print(f"Error calculating twist angles for {case_name}: {e}")
+        # Need to still define time_steps for later use
+        time_steps = list(range(start_step, end_step + 1, step))
         twist_angle_differences = [np.nan] * len(time_steps)
     
     # Calculate volumes and strains using calc_volume_3D function
