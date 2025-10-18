@@ -15,7 +15,7 @@ from scipy.signal import argrelextrema
 import pickle
 from tabulate import tabulate
 from scipy.spatial import cKDTree
-from sklearn.mixture import GaussianMixture
+#from sklearn.mixture import GaussianMixture
 from scipy.integrate import trapezoid
 from scipy.spatial.distance import directed_hausdorff
 

@@ -78,7 +78,7 @@ if [ $? -eq 0 ]; then
     
     # Show summary of results directories created
     echo "Principal strain meshes created in case directories:"
-    find . -name "principal_strains_*.vtp" | wc -l | xargs echo "Total principal strain mesh files:"
+    find . -name "principal_strain_*.vtp" | wc -l | xargs echo "Total principal strain mesh files:"
     
 else
     echo "Analysis failed with exit code $?"

@@ -141,7 +141,7 @@
    <Add_BC name="epi">
       <Type> Robin </Type>
       <Stiffness> 0.0 </Stiffness>
-      <Damping> 8.0e1 </Damping>
+      <Damping> 2.0e1 </Damping>
       <Apply_along_normal_direction> 0 </Apply_along_normal_direction>
    </Add_BC>
 

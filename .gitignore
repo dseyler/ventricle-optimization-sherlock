@@ -30,3 +30,12 @@ Thumbs.db
 
 # Singularity cache
 .singularity/
+
+#Plots directory
+plots/
+
+#Principal strain meshes
+principal_strain_*.vtp
+
+#Analysis results
+*.csv

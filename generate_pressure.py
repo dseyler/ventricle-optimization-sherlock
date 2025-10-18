@@ -32,6 +32,6 @@ def generate_pressure_dat(filename="pressure.dat", n_steps=1001, n_modes=256, ma
 
 if __name__ == "__main__":
     PSI_TO_PA = 6894.76
-    pressure = 2.5
+    pressure = 3.0
     generate_pressure_dat(f"pressure.dat", max_pressure=pressure*PSI_TO_PA)
     print(f"Pressure data written to pressure.dat")

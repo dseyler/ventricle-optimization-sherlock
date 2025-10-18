@@ -13,7 +13,7 @@
 #SBATCH --error=job.e%j
 
 # The walltime you require for your simulation
-#SBATCH --time=24:00:00
+#SBATCH --time=6:00:00
 
 # Job priority. Leave as normal for now.
 #SBATCH --qos=normal
@@ -51,12 +51,12 @@ PRESSURE_FILE="pressure.dat"
 echo "Processing $MESH_DIR with $PRESSURE_FILE"
 python3 -u ../edit_solver.py solver.xml $MESH_DIR 0.001 1000 --pressure-file $PRESSURE_FILE
 
-# Start Volume watcher: terminate if volume exceeds 2.5x undeformed volume
+# Start Volume watcher: terminate if volume exceeds 2.0x undeformed volume
 rm -f .volume_exceeded 2>/dev/null || true
 # Volume watcher logs per-case volumes to a dedicated log file
 vol_log="volume_8_35_0circ.log"
 python3 -u ../watchers.py volume --ref-surface "$MESH_DIR/mesh-surfaces/epi.vtp" \
-                                  --results-glob "results_ventricle_8_35_c*" --threshold-factor 2.5 \
+                                  --results-glob "results_ventricle_8_35_c*" --threshold-factor 2.0 \
                                   --marker .volume_exceeded --log-file "$vol_log" --kill-on-exceed &
 VOL_WATCHER_PID=$!
 
