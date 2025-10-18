@@ -10,13 +10,8 @@ job.e*
 # Results directories
 results_*
 
-# VTU files (can be large)
-*.vtu
-*.vtp
-
 # Binary files
 *.bin
-*.dat
 
 # Python cache
 __pycache__/
