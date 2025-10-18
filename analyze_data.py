@@ -157,9 +157,8 @@ def analyze_single_case(case_info):
     
     # Get simulation parameters
     try:
-        start_step, end_step = get_start_end_step(results_dir)
+        start_step, end_step, step = get_start_end_step(results_dir)
         timestep_size = get_timestep_size(results_dir)
-        step = 1  # Process every timestep
     except Exception as e:
         print(f"Error getting simulation parameters for {case_name}: {e}")
         return pd.DataFrame()
