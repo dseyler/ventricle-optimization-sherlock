@@ -191,14 +191,12 @@ def analyze_single_case(case_info):
     # Calculate volumes and strains using calc_volume_3D function
     print(f"  Calculating volumes and strains...")
     try:
-        volume_results = calc_volume_3D(
+        # calc_volume_3D returns (t, volumes, radial_strains, longitudinal_strains)
+        time_array_vol, volumes, radial_strains, longitudinal_strains = calc_volume_3D(
             start_step, end_step, step, timestep_size,
             results_dir, ref_surface,
             save_intermediate_data=False
         )
-        volumes = volume_results['volumes']
-        radial_strains = volume_results['radial_strains']  # Same as circumferential
-        longitudinal_strains = volume_results['longitudinal_strains']
         
         # Use radial_strains as circumferential_strains (they are the same)
         circumferential_strains = radial_strains
@@ -231,7 +229,7 @@ def analyze_single_case(case_info):
         if time_step % 1 == 0:  # Save every timestep
             try:
                 # Load the VTU file for this timestep
-                vtu_file = os.path.join(results_dir, f"result_{time_step:06d}.vtu")
+                vtu_file = os.path.join(results_dir, f"result_{time_step:03d}.vtu")
                 if os.path.exists(vtu_file):
                     if ref_lumen is not None:
                         mesh = pv.read(vtu_file)
@@ -257,11 +255,23 @@ def analyze_single_case(case_info):
     
     print(f"  Total principal strain files saved: {files_saved}")
     
+    # Ensure all arrays have the same length by using the minimum length
+    min_length = min(len(time_steps), len(time_array), len(twist_angle_differences), 
+                    len(circumferential_strains), len(longitudinal_strains), len(volumes))
+    
+    # Truncate all arrays to the same length
+    time_steps = time_steps[:min_length]
+    time_array = time_array[:min_length]
+    twist_angle_differences = twist_angle_differences[:min_length]
+    circumferential_strains = circumferential_strains[:min_length]
+    longitudinal_strains = longitudinal_strains[:min_length]
+    volumes = volumes[:min_length]
+    
     # Create DataFrame for this case
     case_data = pd.DataFrame({
-        'case_name': [case_name] * len(time_steps),
+        'case_name': [case_name] * min_length,
         'time_step': time_steps,
-        'time': [t * timestep_size for t in time_steps],
+        'time': time_array,
         'twist_angle': twist_angle_differences,
         'circumferential_strain': circumferential_strains,
         'longitudinal_strain': longitudinal_strains,
