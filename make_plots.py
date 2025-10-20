@@ -214,6 +214,77 @@ def plot_helix_angle_comparison(df, helix_angles, circ_type, plots_dir):
     print(f"Saved helix angle comparison plot: {output_file}")
 
 
+def plot_material_comparison(df, plots_dir):
+    """
+    Create material comparison plot for 8_30_0circ cases with different materials.
+    
+    Args:
+        df: DataFrame with the data
+        plots_dir: Directory to save plots
+    """
+    
+    # Define material cases and their labels
+    material_cases = [
+        ('8_30_0circ', 'Smooth-Sil 960'),
+        ('8_30_0circ_DS10', 'Dragonskin 10'),
+        ('8_30_0circ_DS30', 'Dragonskin 30')
+    ]
+    
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 12))
+    fig.suptitle('Material Comparison: 8_30_0circ Geometry', fontsize=16, fontweight='bold')
+    
+    colors = ['blue', 'red', 'green']
+    
+    for i, (case_name, material_label) in enumerate(material_cases):
+        case_data = df[df['case_name'] == case_name].copy()
+        
+        if case_data.empty:
+            print(f"Warning: No data found for case {case_name}")
+            continue
+        
+        # Sort by volume
+        case_data = case_data.sort_values('volume')
+        color = colors[i % len(colors)]
+        
+        # Plot circumferential strain
+        ax1.plot(case_data['volume'], case_data['circumferential_strain'], 
+                color=color, linewidth=2, label=material_label)
+        
+        # Plot longitudinal strain
+        ax2.plot(case_data['volume'], case_data['longitudinal_strain'], 
+                color=color, linewidth=2, label=material_label)
+        
+        # Plot twist angle
+        ax3.plot(case_data['volume'], case_data['twist_angle'], 
+                color=color, linewidth=2, label=material_label)
+    
+    # Set labels and formatting
+    ax1.set_ylabel('Circumferential Strain', fontsize=12)
+    ax1.grid(True, alpha=0.3)
+    ax1.legend(title='Material', fontsize=10)
+    ax1.set_title('Circumferential Strain vs Volume', fontsize=14)
+    
+    ax2.set_ylabel('Longitudinal Strain', fontsize=12)
+    ax2.grid(True, alpha=0.3)
+    ax2.legend(title='Material', fontsize=10)
+    ax2.set_title('Longitudinal Strain vs Volume', fontsize=14)
+    
+    ax3.set_xlabel('Volume', fontsize=12)
+    ax3.set_ylabel('Twist Angle', fontsize=12)
+    ax3.grid(True, alpha=0.3)
+    ax3.legend(title='Material', fontsize=10)
+    ax3.set_title('Twist Angle vs Volume', fontsize=14)
+    
+    plt.tight_layout()
+    
+    # Save plot
+    output_file = plots_dir / "material_comparison_8_30_0circ.png"
+    plt.savefig(output_file, dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Saved material comparison plot: {output_file}")
+
+
 def main():
     """Main function to create all plots."""
     
@@ -300,6 +371,10 @@ Examples:
         
         # 8_{helix_angle}_2circ
         plot_helix_angle_comparison(df, helix_angles, '2circ', plots_dir)
+        
+        # 4. Create material comparison plot
+        print("\n4. Creating material comparison plot...")
+        plot_material_comparison(df, plots_dir)
         
         print(f"\nAll plots completed successfully!")
         print(f"Plots saved in directory: {plots_dir.absolute()}")

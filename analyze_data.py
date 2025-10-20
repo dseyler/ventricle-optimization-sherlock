@@ -28,7 +28,8 @@ from process_results_functions import (
 def find_results_directories(base_dir):
     """Find all results directories in the Sherlock_jobs structure."""
     results_dirs = []
-    case_dirs = glob.glob(os.path.join(base_dir, "*_*_*circ"))
+    # Look for both standard cases (*_*_*circ) and material cases (*_*_*circ_*)
+    case_dirs = glob.glob(os.path.join(base_dir, "*_*_*circ")) + glob.glob(os.path.join(base_dir, "*_*_*circ_*"))
     
     for case_dir in case_dirs:
         case_name = os.path.basename(case_dir)
@@ -226,6 +227,10 @@ def analyze_single_case(case_info):
         print(f"  ref_lumen created successfully, processing {len(time_steps)} timesteps")
         
     files_saved = 0
+    #Create a directory to save the principal strain meshes
+    principal_strain_dir = os.path.join(case_dir, "principal_strain_meshes")
+    if not os.path.exists(principal_strain_dir):
+        os.makedirs(principal_strain_dir)
     for t_idx, time_step in enumerate(time_steps):
         if time_step % 1 == 0:  # Save every timestep
             try:
@@ -239,7 +244,7 @@ def analyze_single_case(case_info):
                         # Save principal strain mesh if calculation was successful
                         if strain_info.get('mesh_with_strains') is not None:
                             strain_mesh = strain_info['mesh_with_strains']
-                            strain_output_file = os.path.join(case_dir, f"principal_strain_{time_step:03d}.vtp")
+                            strain_output_file = os.path.join(principal_strain_dir, f"principal_strain_{time_step:03d}.vtp")
                             strain_mesh.save(strain_output_file)
                             files_saved += 1
                             if files_saved <= 3:  # Only print first few for debugging
